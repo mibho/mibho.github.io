@@ -2,7 +2,7 @@ name: Build and Deploy Jekyll Site
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]   # run on pushes to main
 
 permissions:
   contents: read
@@ -10,39 +10,41 @@ permissions:
   id-token: write
 
 jobs:
-  pages:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    concurrency:
-      group: 'pages'
-      cancel-in-progress: true
 
     steps:
-      # 1️⃣ Checkout code
+      # 1) Checkout code
       - uses: actions/checkout@v3
 
-      # 2️⃣ Mark safe directory
-      - name: Mark repo safe
+      # 2) Mark repo safe (fix dubious ownership)
+      - name: Mark safe directory
         run: git config --global --add safe.directory /github/workspace
 
-      # 3️⃣ Set up Ruby + Bundler
-      - uses: ruby/setup-ruby@v1
+      # 3) Set up Pages support
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # 4) Install Ruby + dependencies for Jekyll
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: "3.1"
           bundler-cache: true
 
-      # 4️⃣ Install dependencies
-      - run: bundle install
+      - name: Install gems
+        run: bundle install
 
-      # 5️⃣ Build Jekyll site
-      - run: bundle exec jekyll build
+      # 5) Build the site locally
+      - name: Build Jekyll site
+        run: bundle exec jekyll build
 
-      # 6️⃣ Upload to Pages
-      - uses: actions/upload-pages-artifact@v1
+      # 6) Upload the built site to be deployed
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./_site
 
-  deploy:
-    needs: pages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/deploy-pages@v1
+      # 7) Deploy it
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
