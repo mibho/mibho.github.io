@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy Jekyll Site
 
 on:
   push:
@@ -10,36 +10,33 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repo
       - uses: actions/checkout@v3
 
-      - name: Fix Git safe directory
+      # 2️⃣ Mark repo safe (prevents dubious ownership errors)
+      - name: Mark repo safe
         run: git config --global --add safe.directory /github/workspace
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      # 3️⃣ Setup Ruby + bundler
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler-cache: true
 
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: bundle install
 
+      # 5️⃣ Build Jekyll site
       - name: Build site
         run: bundle exec jekyll build
 
-      - name: Upload site
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./_site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
+      # 6️⃣ Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
+        with:
+          branch: gh-pages # optional if you want deployment branch
