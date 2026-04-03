@@ -1,13 +1,21 @@
-name: Build and Deploy
-
-on:
-  push:
-    branches: [ "master" ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
+# Checkout repo
       - uses: actions/checkout@v3
-      - uses: actions/jekyll-build-pages@v1
+
+      # Fix "dubious ownership"
+      - name: Mark repo as safe
+        run: git config --global --add safe.directory /github/workspace
+
+      # Setup Ruby
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      # Install dependencies
+      - name: Install gems
+        run: bundle install
+
+      # Build site
+      - name: Build site
+        run: bundle exec jekyll build
