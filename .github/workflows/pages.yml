@@ -10,33 +10,39 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  pages:
     runs-on: ubuntu-latest
+    concurrency:
+      group: 'pages'
+      cancel-in-progress: true
 
     steps:
-      # 1️⃣ Checkout repo
+      # 1️⃣ Checkout code
       - uses: actions/checkout@v3
 
-      # 2️⃣ Mark repo safe (prevents dubious ownership errors)
+      # 2️⃣ Mark safe directory
       - name: Mark repo safe
         run: git config --global --add safe.directory /github/workspace
 
-      # 3️⃣ Setup Ruby + bundler
+      # 3️⃣ Set up Ruby + Bundler
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler-cache: true
 
       # 4️⃣ Install dependencies
-      - name: Install dependencies
-        run: bundle install
+      - run: bundle install
 
       # 5️⃣ Build Jekyll site
-      - name: Build site
-        run: bundle exec jekyll build
+      - run: bundle exec jekyll build
 
-      # 6️⃣ Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+      # 6️⃣ Upload to Pages
+      - uses: actions/upload-pages-artifact@v1
         with:
-          branch: gh-pages # optional if you want deployment branch
+          path: ./_site
+
+  deploy:
+    needs: pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/deploy-pages@v1
