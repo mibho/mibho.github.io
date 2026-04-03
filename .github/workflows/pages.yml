@@ -1,21 +1,21 @@
-# Checkout repo
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
       - uses: actions/checkout@v3
 
-      # Fix "dubious ownership"
-      - name: Mark repo as safe
+      - name: Fix Git safe directory
         run: git config --global --add safe.directory /github/workspace
 
-      # Setup Ruby
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler-cache: true
 
-      # Install dependencies
-      - name: Install gems
+      - name: Install dependencies
         run: bundle install
 
-      # Build site
       - name: Build site
         run: bundle exec jekyll build
