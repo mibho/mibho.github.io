@@ -18,7 +18,7 @@ jobs:
 
     steps:
       # 1️⃣ Checkout code
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       # 2️⃣ Mark safe directory
       - name: Mark repo safe
@@ -37,7 +37,7 @@ jobs:
       - run: bundle exec jekyll build
 
       # 6️⃣ Upload to Pages
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: ./_site
 
@@ -45,4 +45,4 @@ jobs:
     needs: pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/deploy-pages@v1
+      - uses: actions/deploy-pages@v5
