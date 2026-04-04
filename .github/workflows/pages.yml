@@ -1,8 +1,10 @@
+# ChatGPT generated
+
 name: Build and Deploy Jekyll Site
 
 on:
   push:
-    branches: ["main"]   # run on pushes to main
+    branches: [ "main" ]  # run on pushes to main
 
 permissions:
   contents: read
@@ -13,38 +15,44 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    steps:
-      # 1) Checkout code
-      - uses: actions/checkout@v3
+    # Opt into Node.js 24 for actions that currently default to Node.js 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-      # 2) Mark repo safe (fix dubious ownership)
+    steps:
+      # 1️⃣ Checkout your repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Fix Git “dubious ownership” if needed
       - name: Mark safe directory
         run: git config --global --add safe.directory /github/workspace
 
-      # 3) Set up Pages support
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+      # 3️⃣ Prepare Pages environment
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
 
-      # 4) Install Ruby + dependencies for Jekyll
+      # 4️⃣ Set up Ruby (for Jekyll)
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.1"
           bundler-cache: true
 
+      # 5️⃣ Install dependencies
       - name: Install gems
         run: bundle install
 
-      # 5) Build the site locally
-      - name: Build Jekyll site
+      # 6️⃣ Build the Jekyll site
+      - name: Build site
         run: bundle exec jekyll build
 
-      # 6) Upload the built site to be deployed
+      # 7️⃣ Upload the built site as Pages artifact
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./_site
 
-      # 7) Deploy it
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      # 8️⃣ Deploy to GitHub Pages
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v5
