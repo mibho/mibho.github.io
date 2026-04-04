@@ -21,7 +21,7 @@ jobs:
     steps:
       # 1️⃣ Checkout your repository
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # 2️⃣ Fix Git “dubious ownership” if needed
       - name: Mark safe directory
@@ -54,4 +54,4 @@ jobs:
 
       # 8️⃣ Deploy to GitHub Pages
       - name: Deploy to Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
