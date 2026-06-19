@@ -21,7 +21,7 @@ jobs:
     steps:
       # 1️⃣ Checkout your repository
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # 2️⃣ Fix Git “dubious ownership” if needed
       - name: Mark safe directory
@@ -48,7 +48,7 @@ jobs:
 
       # 7️⃣ Upload the built site as Pages artifact
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./_site
 
